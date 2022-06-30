@@ -1,5 +1,6 @@
 const express = require("express");
-var session = require('express-session')
+var session = require('express-session');
+const MemoryStore = require('memorystore')(session);
 const cors = require("cors");
 const app = express();
 
@@ -7,6 +8,9 @@ app.set('trust proxy', 1);
 app.use(session({
     secret: 'somerandomsecretkey',
     resave: true,
+    store: new MemoryStore({
+      checkPeriod: 86400000
+    }),
     saveUninitialized: true,
     unset: 'keep',
     cookie: { secure: false, httpOnly: false, sameSite: false}
@@ -32,4 +36,4 @@ app.use("/message", messageRouter);
 const userRouter = require("./server/routes/UserRouter");
 app.use("/user", userRouter);
 
-app.listen(80);
+app.listen(process.env.PORT);
